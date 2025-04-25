@@ -1,16 +1,8 @@
-BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
+from config import BASE_URL
+from helpers.utils import get_valid_ingredient_ids
+import requests
+import allure
 
-
-
-@allure.step("Получение валидных ингредиентов")
-def get_valid_ingredient_ids(count=2):
-    response = requests.get(f"{BASE_URL}ingredients")
-    assert response.status_code == 200, "Не удалось получить список ингредиентов"
-
-    ingredients = response.json().get("data", [])
-    assert ingredients, "Список ингредиентов пуст"
-
-    return [ingredient["_id"] for ingredient in ingredients[:count]]
 
 
 

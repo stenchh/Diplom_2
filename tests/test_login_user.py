@@ -1,12 +1,13 @@
-BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
-
+from config import BASE_URL
+import allure
+import requests
 
 class TestLoginUser:
 
     @allure.title("Вход с валидными учетными данными")
     @allure.description("Проверяется, что пользователь может успешно войти в систему с правильными данными.")
     @allure.step("Выполнение входа с правильным email и паролем")
-    def test_login_with_valid_credentials(self, create_user):
+    def test_login_with_valid_credentials(self, create_user, delete_user_after_test):
         payload = {
             "email": create_user["email"],
             "password": create_user["password"]

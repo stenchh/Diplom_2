@@ -1,4 +1,7 @@
-BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
+from config import BASE_URL
+import allure
+import requests
+
 
 
 class TestCreateOrder:
@@ -6,7 +9,7 @@ class TestCreateOrder:
     @allure.title("Создание заказа с авторизацией и валидными ингредиентами")
     @allure.description("Проверяется успешное создание заказа при наличии токена и корректных ингредиентов.")
     @allure.step("Отправка запроса на создание заказа с авторизацией и ингредиентами")
-    def test_create_order_with_auth_and_ingredients(self, registered_user_with_token, valid_ingredients):
+    def test_create_order_with_auth_and_ingredients(self, registered_user_with_token, valid_ingredients, delete_user_after_test):
         headers = {
             "Authorization": registered_user_with_token["access_token"]
         }
@@ -27,24 +30,11 @@ class TestCreateOrder:
         response = requests.post(f"{BASE_URL}orders", json=payload)
         assert response.status_code == 401
 
-    @allure.title("Создание заказа с ингредиентами и авторизацией (дублирующий тест)")
-    @allure.description("Повторный тест успешного создания заказа, аналогичный предыдущему.")
-    @allure.step("Отправка запроса на создание заказа с ингредиентами и авторизацией")
-    def test_create_order_with_ingredients(self, registered_user_with_token, valid_ingredients):
-        headers = {"Authorization": registered_user_with_token["access_token"]}
-        payload = {"ingredients": valid_ingredients}
-
-        response = requests.post(f"{BASE_URL}orders", json=payload, headers=headers)
-        assert response.status_code == 200
-        data = response.json()
-        assert data["success"] is True
-        assert "order" in data
-        assert data["order"]["number"] is not None
 
     @allure.title("Создание заказа без ингредиентов")
     @allure.description("Проверяется, что заказ не может быть создан без указания ингредиентов.")
     @allure.step("Отправка запроса с пустым списком ингредиентов")
-    def test_create_order_without_ingredients(self, registered_user_with_token):
+    def test_create_order_without_ingredients(self, registered_user_with_token, delete_user_after_test):
         headers = {"Authorization": registered_user_with_token["access_token"]}
         payload = {"ingredients": []}
 
@@ -57,7 +47,7 @@ class TestCreateOrder:
     @allure.title("Создание заказа с невалидными хешами ингредиентов")
     @allure.description("Проверяется, что при передаче некорректных ID ингредиентов возвращается ошибка 500.")
     @allure.step("Отправка запроса с невалидными ID ингредиентов")
-    def test_create_order_with_invalid_ingredient_hash(self, registered_user_with_token):
+    def test_create_order_with_invalid_ingredient_hash(self, registered_user_with_token, delete_user_after_test):
         headers = {"Authorization": registered_user_with_token["access_token"]}
         payload = {"ingredients": ["invalid_hash_1", "invalid_hash_2"]}
 

@@ -1,24 +1,20 @@
-import random
-import string
-
-
-BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
+from config import BASE_URL
+import allure
+import requests
+from helpers.generators import generate_random_string
 
 
 class TestCreateUser:
 
     @allure.title("Создание пользователя с валидными данными")
     @allure.description("Проверяется, что пользователь может быть успешно создан, если переданы все необходимые поля.")
-    @allure.step("Генерация случайного email и имени")
-    def generate_random_string(self, length):
-        return ''.join(random.choice(string.ascii_lowercase) for _ in range(length))
-
     @allure.step("Отправка запроса на регистрацию с валидными данными")
-    def test_create_user_with_full_data_only(self):
+
+    def test_create_user_with_full_data_only(self, delete_user_after_test):
         payload = {
-            "email": f"{self.generate_random_string(10)}@yandex.ru",
+            "email": f"{generate_random_string(10)}@yandex.ru",
             "password": "password123",
-            "name": self.generate_random_string(10)
+            "name": generate_random_string(10)
         }
 
         response = requests.post(f'{BASE_URL}auth/register', json=payload)
