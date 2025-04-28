@@ -1,8 +1,9 @@
 import pytest
 import requests
 from helpers.generators import generate_random_string
-BASE_URL = "https://stellarburgers.nomoreparties.site/api/"
 from helpers.utils import get_ingredients
+from config import BASE_URL
+
 
 
 
@@ -20,7 +21,7 @@ def create_user():
     }
 
     response = requests.post(
-        'https://your-api-endpoint.ru/api/auth/register',
+        f'{BASE_URL}auth/register',
         json=payload
     )
 

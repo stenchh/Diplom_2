@@ -29,6 +29,9 @@ class TestCreateOrder:
         payload = {"ingredients": valid_ingredients}
         response = requests.post(f"{BASE_URL}orders", json=payload)
         assert response.status_code == 401
+        data = response.json()
+        assert data["success"] is False
+        assert data["message"] == "You should should be authorised"
 
 
     @allure.title("Создание заказа без ингредиентов")
