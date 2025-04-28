@@ -1,5 +1,6 @@
 from config import BASE_URL
 from helpers.utils import get_valid_ingredient_ids
+from helpers.utils import create_order
 import requests
 import allure
 
@@ -8,25 +9,13 @@ import allure
 
 class TestGetUserOrders:
 
-    @allure.step("Создание заказа с токеном и ингредиентами")
-    def create_order(self, token, ingredients):
-        headers = {
-            "Authorization": token
-        }
-        payload = {
-            "ingredients": ingredients
-        }
-        response = requests.post(f"{BASE_URL}orders", json=payload, headers=headers)
-        assert response.status_code == 200
-        return response.json()
-
     @allure.title("Получение заказов авторизованного пользователя")
     @allure.description("Проверяется, что авторизованный пользователь может получить список своих заказов.")
     def test_get_orders_with_auth(self, registered_user_with_token):
         token = registered_user_with_token["access_token"]
         ingredients = get_valid_ingredient_ids()
 
-        self.create_order(token, ingredients)
+        create_order(token, ingredients)
 
         headers = {
             "Authorization": token
